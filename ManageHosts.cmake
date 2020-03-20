@@ -61,10 +61,9 @@ else()
 endif()
 
 
-# Defines a target for running and collection code coverage information
-# Builds dependencies, runs the given executable and outputs reports.
-# NOTE! The executable should always have a ZERO as exit code otherwise
-# the coverage generation will not complete.
+# Update hosts to register the specified host name and IP address pair.
+# If the host name already exists, update the IP address.
+# If the IP address already exists, add the host name to the alias.
 #
 # UPDATE_HOSTS(
 #     HOSTIP "hostname:hostip"
