@@ -43,6 +43,19 @@ include(CMakeParseArguments)
 # Check hosts script
 if(WIN32)
 	set(HOSTS_PATH "C:/Windows/System32/drivers/etc/hosts")
+	find_file(
+		COPYSCRIPT comcopy.ps1
+		PATHS ${CMAKE_CURRENT_LIST_DIR}/scripts
+		DOC "Find copy script..."
+		NO_DEFAULT_PATH
+		NO_CMAKE_ENVIRONMENT_PATH
+		NO_CMAKE_PATH
+		NO_SYSTEM_ENVIRONMENT_PATH
+		NO_CMAKE_SYSTEM_PATH
+	)
+	if(NOT COPYSCRIPT)
+		message(FATAL_ERROR "Not Found comcocpy.ps1")
+	endif()
 else()
 	set(HOSTS_PATH "/etc/hosts")
 endif()
@@ -53,10 +66,8 @@ endif()
 # NOTE! The executable should always have a ZERO as exit code otherwise
 # the coverage generation will not complete.
 #
-# SETUP_TARGET_FOR_COVERAGE_LCOV(
-#     NAME testrunner_coverage                    # New target name
-#     EXECUTABLE testrunner -j ${PROCESSOR_COUNT} # Executable in PROJECT_BINARY_DIR
-#     DEPENDENCIES testrunner                     # Dependencies to build first
+# UPDATE_HOSTS(
+#     HOSTIP "hostname:hostip"
 # )
 function(UPDATE_HOSTS)
     set(options NONE_OP)
@@ -82,23 +93,20 @@ function(UPDATE_HOSTS)
 	endif()
 
 	set(TMP_HOSTS ${CMAKE_BINARY_DIR}/hosts)
-	#file(COPY ${HOSTS_PATH} DESTINATION ${CMAKE_BINARY_DIR})
 	string(REGEX REPLACE ";" "\n" HOSTS_FILE "${HOSTS_FILE}")
 	file(WRITE ${TMP_HOSTS} "${HOSTS_FILE}")
 
 	
 	if(WIN32)
-		# On Windows10, the automatic replacement(include copy) of hosts is access rejected.
-		# so, manually copy the automatically generated hosts.
-		message("Please COPY hosts file. from ${TMP_HOSTS} to ${HOSTS_PATH}")
-
 		string(REPLACE "/" "\\" HOSTS_PATH "${HOSTS_PATH}")
 		string(REPLACE "/" "\\" TMP_HOSTS "${TMP_HOSTS}")
 
-		# Open Explorer Copy Directry
+		# On Windows10, the automatic replacement(include copy) of hosts is access rejected.
+		# so, manually copy the automatically generated hosts.
 		execute_process(
-			COMMAND ${CMAKE_CURRENT_LIST_DIR}/scripts/explorer.bat ${TMP_HOSTS} ${HOSTS_PATH}
+			COMMAND powershell -NoProfile -ExecutionPolicy Unrestricted -File ${COPYSCRIPT} ${TMP_HOSTS} ${HOSTS_PATH}
 			ENCODING AUTO)
+
 	else()
 		string(TIMESTAMP COPYTIME %Y%m%d_%H%M%S)
 		set(ORIGINAL_HOSTS "${HOSTS_PATH}.${COPYTIME}")
