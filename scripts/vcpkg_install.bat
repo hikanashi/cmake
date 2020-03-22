@@ -1,7 +1,9 @@
 @echo off
 
-git clone https://github.com/Microsoft/vcpkg.git
+rem git clone https://github.com/Microsoft/vcpkg.git
+git clone https://github.com/hikanashi/vcpkg.git
+
 cd vcpkg
 powershell -Command ".\bootstrap-vcpkg.bat"
-powershell -Command ".\vcpkg integrate install"
+REM powershell -Command ".\vcpkg integrate install"
 pause
