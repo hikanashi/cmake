@@ -12,7 +12,7 @@ set HTTP_PROXY=%PROXYSHEMA%%PROXYUSER%:%PROXYPASS%@%PROXYAUTHORITY%
 set HTTPS_PROXY=%PROXYSHEMA%%PROXYUSER%:%PROXYPASS%@%PROXYAUTHORITY%
 rem echo set HTTPS_PROXY=%HTTPS_PROXY%
 
-# clone vcpkg
+rem clone vcpkg
 if not exist vcpkg (
 	REM git clone https://github.com/Microsoft/vcpkg.git
 	git clone https://github.com/hikanashi/vcpkg.git
@@ -26,6 +26,4 @@ if not exist vcpkg.exe (
 	REM powershell -Command ".\vcpkg integrate install"
 )
 
-vcpkg install pthread openssl nghttp2 curl jansson libevent protobuf grpc
-
-pause
+vcpkg install pthread pcre openssl nghttp2 curl jansson libevent[core,openssl,thread] protobuf grpc
