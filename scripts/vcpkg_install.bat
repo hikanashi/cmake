@@ -26,4 +26,4 @@ if not exist vcpkg.exe (
 	REM powershell -Command ".\vcpkg integrate install"
 )
 
-vcpkg install pthread pcre openssl nghttp2 curl jansson libevent[core,openssl,thread] protobuf grpc
+vcpkg install pthread pcre openssl curl[tool,non-http,http2,openssl] jansson libevent[core,openssl,thread] protobuf grpc
