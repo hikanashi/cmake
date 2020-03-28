@@ -33,6 +33,10 @@
 #
 # 3. Append vcpkg_init()
 #
+# EXSAMPLE:
+# include(vcpkgtoolchain)
+# vcpkg_init(pthread pcre openssl curl[tool,non-http,http2,openssl] jansson libevent[core,openssl,thread] protobuf grpc)
+#
 
 # find script
 if(WIN32)
@@ -68,8 +72,17 @@ endif()
 # If the environment variable VCPKG_ROOT is set, set the toolchain under VCPKG_ROOT.
 # If the vcpkg directory already exists under $ {CMAKE_SOURCE_DIR}, set that toolchain.
 # If the vcpkg directory does not exist, install vcpkg and necessary packages under $ {CMAKE_SOURCE_DIR}.
-# vcpkg_init()
+#
+# vcpkg_init(arg)
+#     arg : packagename
 macro(vcpkg_init)
+	string(REPLACE ";" " " PACKAGELIST "${ARGN}")
+
+	execute_process(
+			COMMAND ${VCPKG_INSTALL} ${PACKAGELIST}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			ENCODING AUTO)
+
 	if(DEFINED CMAKE_TOOLCHAIN_FILE)
 		message("already toolchain file ${CMAKE_TOOLCHAIN_FILE}")
 	elseif(DEFINED ENV{VCPKG_ROOT})
@@ -79,13 +92,7 @@ macro(vcpkg_init)
 		set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
 		message("exist vcpkg dir. so set toolchain file ${CMAKE_TOOLCHAIN_FILE}")
 	else()
-		message("not exist vcpkg dir. so install vcpkg.")
-		execute_process(
-				COMMAND ${VCPKG_INSTALL}
-				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-				ENCODING AUTO)
-		set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-		message("so set toolchain file ${CMAKE_TOOLCHAIN_FILE}")
+		message(ERROR "not exist vcpkg dir. so install vcpkg.(${PACKAGELIST})")
 	endif()
 
 	include(${CMAKE_TOOLCHAIN_FILE})
