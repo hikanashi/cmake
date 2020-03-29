@@ -35,7 +35,7 @@
 #
 # EXSAMPLE:
 # include(vcpkgtoolchain)
-# vcpkg_init(pthread pcre openssl curl[tool,non-http,http2,openssl] jansson libevent[core,openssl,thread] protobuf grpc)
+# vcpkg_init(pthread pcre openssl curl[non-http,http2,openssl] jansson libevent[core,openssl,thread] protobuf grpc)
 #
 
 # find script
@@ -78,10 +78,17 @@ endif()
 macro(vcpkg_init)
 	string(REPLACE ";" " " PACKAGELIST "${ARGN}")
 
-	execute_process(
-			COMMAND /bin/bash -x ${VCPKG_INSTALL} ${PACKAGELIST}
+	if(WIN32)
+		execute_process(
+			COMMAND ${VCPKG_INSTALL} ${PACKAGELIST}
 			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 			ENCODING AUTO)
+	else()
+		execute_process(
+			COMMAND /bin/bash ${VCPKG_INSTALL} ${PACKAGELIST}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			ENCODING AUTO)
+	endif()
 
 	if(DEFINED CMAKE_TOOLCHAIN_FILE)
 		message("already toolchain file ${CMAKE_TOOLCHAIN_FILE}")
