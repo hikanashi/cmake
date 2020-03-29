@@ -9,6 +9,8 @@
 
 rem clone vcpkg
 if not exist vcpkg (
+	REM Microsoft vcpkg does not support authentication proxy.
+	REM Therefore, use a fork repository that supports the authentication proxy.
 	REM git clone https://github.com/Microsoft/vcpkg.git
 	git clone https://github.com/hikanashi/vcpkg.git
 )
