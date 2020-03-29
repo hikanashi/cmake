@@ -13,7 +13,7 @@ function CopyWithExplorer([string]$srcfile, [string]$dstfile)
         $dstname = $dst.Directory.FullName
     }
 
-    # shell�쐬
+    # shell作成
     $shell = New-Object -comObject Shell.Application
     $folder = $shell.NameSpace($dstname)
 
