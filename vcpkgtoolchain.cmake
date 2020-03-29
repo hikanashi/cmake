@@ -79,7 +79,7 @@ macro(vcpkg_init)
 	string(REPLACE ";" " " PACKAGELIST "${ARGN}")
 
 	execute_process(
-			COMMAND ${VCPKG_INSTALL} ${PACKAGELIST}
+			COMMAND /bin/bash -x ${VCPKG_INSTALL} ${PACKAGELIST}
 			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 			ENCODING AUTO)
 
